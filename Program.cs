@@ -13,8 +13,4 @@ app.MapPost("/login", (loginDto loginDto) => {
 
 app.Run();
 
-public class loginDto
-{
-    public string Email { get; set; } = default!;
-    public string Password { get; set; } = default!;
-}
+
