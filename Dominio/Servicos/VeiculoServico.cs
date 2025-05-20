@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Dominio.Servicos
 {
-    public class VeiculoServico : IVeiculoService
+    public class VeiculoServico : IVeiculoServico
     {
         private readonly DbContexto _contexto;
 
