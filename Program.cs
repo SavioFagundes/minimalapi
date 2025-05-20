@@ -30,7 +30,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapGet("/", () => Results.Json(new Home()));
+app.MapGet("/", () => Results.Json(new Home())).WithTags("Home");
 
 app.MapPost("/administradores/login", ([FromBody] loginDto loginDto, IAdministradorServico administradorServico) => {
     if (administradorServico.Login(loginDto) != null)
@@ -38,7 +38,7 @@ app.MapPost("/administradores/login", ([FromBody] loginDto loginDto, IAdministra
         return Results.Ok(new { message = "Login realizado com sucesso" });
     }
     return Results.Unauthorized();
-});
+}).WithTags("Administradores");
 
 
 app.MapPost("/veiculos", ([FromBody] VeiculoDTO veiculoDto, IVeiculoServico veiculoServico) => {
@@ -51,7 +51,35 @@ app.MapPost("/veiculos", ([FromBody] VeiculoDTO veiculoDto, IVeiculoServico veic
     veiculoServico.Incluir(veiculo);
     return Results.Created($"/veiculos/{veiculo.Id}", veiculo);
 
-});
+}).WithTags("Veiculos");
+
+app.MapGet("/veiculos",([FromQuery] int pagina,IVeiculoServico veiculoServico) => {
+
+    var veiculos = veiculoServico.Todos(pagina);
+    return Results.Ok(veiculos);
+
+}).WithTags("Veiculos");
+
+
+app.MapGet("/veiculos/{id}",([FromRoute] int id,IVeiculoServico veiculoServico) => {
+
+    var veiculo = veiculoServico.BuscaPorId(id);
+    if(veiculo == null) return Results.NotFound();
+    return Results.Ok(veiculo);
+
+}).WithTags("Veiculos");
+
+app.MapPut("/veiculos/{id}",([FromRoute] int id,VeiculoDTO veiculoDto,IVeiculoServico veiculoServico) => {
+
+    var veiculo = veiculoServico.BuscaPorId(id);
+    if(veiculo == null) return Results.NotFound();
+    veiculo.Nome = veiculoDto.Nome;
+    veiculo.Marca = veiculoDto.Marca;
+    veiculo.Ano = veiculoDto.Ano;
+    veiculoServico.Atualizar(veiculo);
+    return Results.Ok(veiculo);
+
+}).WithTags("Veiculos");
 
 app.Run();
 
